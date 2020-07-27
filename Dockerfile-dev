@@ -18,7 +18,7 @@
 ######################################################################
 # Dev image...
 ######################################################################
-FROM preset/superset:dev
+FROM facilittecnologia/superset:v1.no-ui
 
 COPY ./requirements* ./docker/requirements* /app/
 
@@ -28,4 +28,5 @@ RUN cd /app \
     && pip install --no-cache -r requirements.txt -r requirements-dev.txt \
     && pip install --no-cache -r requirements-extra.txt \
     && pip install --no-cache -r requirements-local.txt || true
+
 USER superset
