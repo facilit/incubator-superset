@@ -35,22 +35,27 @@ def boletim_covid():
     return pagina
 
 @talisman(force_https=False)
-@app.route("/trend_paraiba")
-def trend_paraiba():
-   panda_query = read_sql('''select data as data_casos, "casosNovos" as casos_novos, avg("casosNovos") over (order by data rows between 6 preceding and current row) pcn 
-   from "SES_PB" group by data, "casosNovos" order by data''','postgresql://' + USUARIO_BD + ':' + SENHA_BD + '@192.168.0.100:5433/target_pb')
+@app.route("/trend_paraiba_pcn")
+def trend_paraiba_pcn():
+   connection = psycopg2.connect('postgresql://' + USUARIO_BD + ':' + SENHA_BD + '@192.168.0.100:5433/target_pb')
+   cursor = connection.cursor()
+   cursor.execute('''select data as data_casos, "casosNovos" as casos_novos, cast(avg("casosNovos") over (order by data rows between 6 preceding and current row) as numeric(12,2)) pcn 
+   from "SES_PB" group by data, "casosNovos" order by data''')
+   
+   result = cursor.fetchall()
+   panda_query = pd.DataFrame(list(result))
    
    data = [
        go.Bar(
-           x=panda_query['data_casos'],
-           y=panda_query['casos_novos'],
+           x=panda_query[0],
+           y=panda_query[1],
            name='Casos por dia',
            hovertemplate='Data: %{x}<br>Casos confirmados: %{y}'           
-       ),
+        ),
        go.Scatter(
-           x=panda_query['data_casos'],
-           y=panda_query['pcn'],
-           name='PCN'
+           x=panda_query[0],
+           y=panda_query[2],
+           name='Media móvel'
        )
    ]
    layout = go.Layout(
@@ -59,4 +64,39 @@ def trend_paraiba():
    )
    fig = go.Figure(data=data,layout=layout)
    pagina = io.to_html(fig)
+   cursor.close()
+   connection.close()
+   return pagina
+
+@app.route("/trend_paraiba_obitos")
+def trend_paraiba_obitos():
+   connection = psycopg2.connect('postgresql://' + USUARIO_BD + ':' + SENHA_BD + '@192.168.0.100:5433/target_pb')
+   cursor = connection.cursor()
+   cursor.execute('''select data as data_casos, "obitosNovos" as obitos_novos, cast(avg("obitosNovos") over (order by data rows between 6 preceding and current row) as numeric(12,2)) pcn 
+   from "SES_PB" group by data, "obitosNovos" order by data''')
+   
+   result = cursor.fetchall()
+   panda_query = pd.DataFrame(list(result))
+   
+   data = [
+       go.Bar(
+           x=panda_query[0],
+           y=panda_query[1],
+           name='Obitos por dia',
+           hovertemplate='Data: %{x}<br>Obitos: %{y}'           
+        ),
+       go.Scatter(
+           x=panda_query[0],
+           y=panda_query[2],
+           name='Média movel'
+       )
+   ]
+   layout = go.Layout(
+           xaxis=go.layout.XAxis(tickmode='auto')
+      
+   )
+   fig = go.Figure(data=data,layout=layout)
+   pagina = io.to_html(fig)
+   cursor.close()
+   connection.close()
    return pagina
