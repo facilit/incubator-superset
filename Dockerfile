@@ -41,7 +41,7 @@ RUN cd /app \
 ######################################################################
 FROM node:10-jessie AS superset-node
 
-ARG NPM_BUILD_CMD="build"
+ARG NPM_BUILD_CMD="prod"
 ENV BUILD_CMD=${NPM_BUILD_CMD}
 
 # NPM ci first, as to NOT invalidate previous steps except for when package.json changes
@@ -54,12 +54,10 @@ RUN /frontend-mem-nag.sh \
         && npm ci
 
 # Next, copy in the rest and let webpack do its thing
-COPY ./superset-frontend /app/superset-frontend
+COPY ./facilit-frontend /app/superset-frontend
 # This is BY FAR the most expensive step (thanks Terser!)
 RUN cd /app/superset-frontend \
-        && npm run ${BUILD_CMD} \
-        && rm -rf node_modules
-
+        && npm run ${BUILD_CMD}
 
 ######################################################################
 # Final lean image...
