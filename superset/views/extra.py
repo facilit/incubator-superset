@@ -13,8 +13,8 @@ import pandas as pd
 from pandas import read_sql
 import plotly.graph_objects as go
 
-USUARIO_BD = ""
-SENHA_BD = ""
+USUARIO_BD = "postgres"
+SENHA_BD = "postgres"
 
 @talisman(force_https=False)
 @app.route("/boletim_covid")
