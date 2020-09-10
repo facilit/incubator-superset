@@ -4,7 +4,7 @@ node {
       git branch: 'paraiba', credentialsId: 'ac4c8028-d6bf-40ba-8c2d-7e72de2d809b', url: 'https://github.com/facilit/incubator-superset.git'
    }
     stage('Build') {  
-      def customImage = docker.build("facilittecnologia/superset:paraibav1.${env.BUILD_ID}")
+      def customImage = docker.build("facilittecnologia/superset:paraiba")
       customImage.push()
    }
 }  
