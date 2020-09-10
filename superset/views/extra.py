@@ -12,6 +12,7 @@ import plotly.io as io
 import pandas as pd
 from pandas import read_sql
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 USUARIO_BD = "postgres"
 SENHA_BD = "postgres"
@@ -111,24 +112,39 @@ def casos_por_sintoma_geral():
     result = cursor.fetchall()
     panda_query = pd.DataFrame(list(result))
 
-    data = [
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
+
+    fig.add_trace(
+        go.Scatter(
+            x=panda_query[0],
+            y=panda_query[2],
+            name='Casos acumulados',
+            hovertemplate='Data: %{x}<br>Casos acumulados: %{y}'
+        ),
+        secondary_y=True
+    )
+
+    fig.add_trace(
         go.Bar(
             x=panda_query[0],
             y=panda_query[1],
             name='Casos confirmados',
             hovertemplate='Data: %{x}<br>Casos confirmados: %{y}'
         ),
-        go.Scatter(
-            x=panda_query[0],
-            y=panda_query[2],
-            name='Casos acumulados',
-            hovertemplate='Data: %{x}<br>Casos acumulados: %{y}'
-        )
-    ]
-    layout = go.Layout(xaxis=go.layout.XAxis(tickmode='auto'))
+        secondary_y=False
+    )
 
-    fig = go.Figure(data=data, layout=layout)
+    fig.update_layout(
+        title_text="Casos confirmados por data de sintoma"
+    )
+
+    fig.update_xaxes(title_text="tempo")
+
+    fig.update_yaxes(title_text="<b>Casos por dia</b>", range=[0,6000],secondary_y=False)
+    fig.update_yaxes(title_text="<b>Casos acumulados</b>",rangemode='tozero', secondary_y=True)
+    
     page = io.to_html(fig)
+    
     cursor.close()
     connection.close()
     return page
@@ -137,28 +153,46 @@ def casos_por_sintoma_geral():
 def obitos_por_ocorrencia_geral():
     connection = psycopg2.connect('postgresql://' + USUARIO_BD + ':' + SENHA_BD + '@192.168.0.100:5433/target_pb')
     cursor = connection.cursor()
-    cursor.execute("select to_char(data_obitos, 'YYYY-MM-DD'), obitos_novos, obitos_acumulados from obitos_por_ocorrencia_geral")
+    cursor.execute("select to_char(data_obito, 'YYYY-MM-DD'), obitos_novos, obitos_acumulados from obitos_por_ocorrencia_geral")
 
     result = cursor.fetchall()
     panda_query = pd.DataFrame(list(result))
 
-    data = [
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
+
+    fig.add_trace(
+        go.Scatter(
+            x=panda_query[0],
+            y=panda_query[2],
+            name='Óbitos acumulados',
+            hovertemplate='Data: %{x}<br>Óbitos acumulados: %{y}'
+        ),
+        secondary_y=True,
+        col=1,
+        row=1
+    )
+
+    fig.add_trace(
         go.Bar(
             x=panda_query[0],
             y=panda_query[1],
             name='Óbitos confirmados',
             hovertemplate='Data: %{x}<br>Óbitos confirmados: %{y}'
         ),
-        go.Scatter(
-            x=panda_query[0],
-            y=panda_query[2],
-            name='Óbitos acumulados',
-            hovertemplate='Data: %{x}<br>Óbitos acumulados: %{y}'
-        )
-    ]
-    layout = go.Layout(xaxis=go.layout.XAxis(tickmode='auto'))
+        secondary_y=False,
+        col=1,
+        row=1
+    )
 
-    fig = go.Figure(data=data, layout=layout)
+    fig.update_layout(
+        title_text="Óbitos confirmados por data dos óbitos" #titulo do chart
+    )
+
+    fig.update_xaxes(title_text="tempo")
+
+    fig.update_yaxes(title_text="<b>Óbitos por dia</b>", range=[0,100],secondary_y=False)
+    fig.update_yaxes(title_text="<b>Óbitos acumulados</b>", rangemode='tozero', secondary_y=True)
+    
     page = io.to_html(fig)
     cursor.close()
     connection.close()
