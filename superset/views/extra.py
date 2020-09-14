@@ -105,7 +105,7 @@ def trend_paraiba_obitos():
 
 @app.route("/casos_por_sintoma_geral")
 def casos_por_sintoma_geral():
-    connection = psycopg2.connect('postgresql://' + USUARIO_BD + ':' + SENHA_BD + '@192.168.0.100:5433/target_pb')
+    connection = psycopg2.connect('postgresql://' + USUARIO_BD + ':' + SENHA_BD + '@localhost:5432/db_local')
     cursor = connection.cursor()
     cursor.execute("select to_char(data_inicio_sintomas, 'YYYY-MM-DD'), casos_novos, casos_acumulados from casos_por_sintoma_geral")
 
@@ -119,7 +119,7 @@ def casos_por_sintoma_geral():
             x=panda_query[0],
             y=panda_query[2],
             name='Casos acumulados',
-            hovertemplate='Data: %{x}<br>Casos acumulados: %{y}'
+            hovertemplate='Data: %{x}<br>Casos acumulados: %{y}' # # informação que aparece ao passar o mouse por cima
         ),
         secondary_y=True
     )
@@ -128,19 +128,21 @@ def casos_por_sintoma_geral():
         go.Bar(
             x=panda_query[0],
             y=panda_query[1],
-            name='Casos confirmados',
-            hovertemplate='Data: %{x}<br>Casos confirmados: %{y}'
+            name='Casos novos',
+            hovertemplate='Data: %{x}<br>Casos novos: %{y}' # informação que aparece ao passar o mouse por cima
         ),
         secondary_y=False
     )
+    
+    # esse código aqui serve para caso queira adicionar titulo ao gráfico
 
-    fig.update_layout(
-        title_text="Casos confirmados por data de sintoma"
-    )
+    # fig.update_layout( 
+    #     title_text="Casos confirmados por data de sintoma"
+    # )
 
-    fig.update_xaxes(title_text="tempo")
+    # fig.update_xaxes(title_text="tempo") titulo do eixo X
 
-    fig.update_yaxes(title_text="<b>Casos por dia</b>", range=[0,6000],secondary_y=False)
+    fig.update_yaxes(title_text="<b>Casos novos</b>", range=[0,6000],secondary_y=False)
     fig.update_yaxes(title_text="<b>Casos acumulados</b>",rangemode='tozero', secondary_y=True)
     
     page = io.to_html(fig)
@@ -151,7 +153,7 @@ def casos_por_sintoma_geral():
 
 @app.route("/obitos_por_ocorrencia_geral")
 def obitos_por_ocorrencia_geral():
-    connection = psycopg2.connect('postgresql://' + USUARIO_BD + ':' + SENHA_BD + '@192.168.0.100:5433/target_pb')
+    connection = psycopg2.connect('postgresql://' + USUARIO_BD + ':' + SENHA_BD + '@localhost:5432/db_local')
     cursor = connection.cursor()
     cursor.execute("select to_char(data_obito, 'YYYY-MM-DD'), obitos_novos, obitos_acumulados from obitos_por_ocorrencia_geral")
 
@@ -176,21 +178,23 @@ def obitos_por_ocorrencia_geral():
         go.Bar(
             x=panda_query[0],
             y=panda_query[1],
-            name='Óbitos confirmados',
-            hovertemplate='Data: %{x}<br>Óbitos confirmados: %{y}'
+            name='Óbitos novos',
+            hovertemplate='Data: %{x}<br>Óbitos novos: %{y}'
         ),
         secondary_y=False,
         col=1,
         row=1
     )
 
-    fig.update_layout(
-        title_text="Óbitos confirmados por data dos óbitos" #titulo do chart
-    )
+    # esse código aqui serve para caso queira adicionar titulo ao gráfico
+    
+    # fig.update_layout(
+    #     title_text="Óbitos confirmados por data dos óbitos" #titulo do chart
+    # )
 
-    fig.update_xaxes(title_text="tempo")
+    # fig.update_xaxes(title_text="tempo") titulo do eixo X
 
-    fig.update_yaxes(title_text="<b>Óbitos por dia</b>", range=[0,100],secondary_y=False)
+    fig.update_yaxes(title_text="<b>Óbitos novos</b>", range=[0,100],secondary_y=False)
     fig.update_yaxes(title_text="<b>Óbitos acumulados</b>", rangemode='tozero', secondary_y=True)
     
     page = io.to_html(fig)
