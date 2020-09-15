@@ -140,7 +140,7 @@ def casos_por_sintoma_geral():
     #     title_text="Casos confirmados por data de sintoma"
     # )
 
-    # fig.update_xaxes(title_text="tempo") titulo do eixo X
+    fig.update_xaxes(title_text="data de início de sintomas") # titulo do eixo X
 
     fig.update_yaxes(title_text="<b>Casos novos</b>", range=[0,6000],secondary_y=False)
     fig.update_yaxes(title_text="<b>Casos acumulados</b>",rangemode='tozero', secondary_y=True)
@@ -192,7 +192,7 @@ def obitos_por_ocorrencia_geral():
     #     title_text="Óbitos confirmados por data dos óbitos" #titulo do chart
     # )
 
-    # fig.update_xaxes(title_text="tempo") titulo do eixo X
+    fig.update_xaxes(title_text="data de ocorrência") # titulo do eixo X
 
     fig.update_yaxes(title_text="<b>Óbitos novos</b>", range=[0,100],secondary_y=False)
     fig.update_yaxes(title_text="<b>Óbitos acumulados</b>", rangemode='tozero', secondary_y=True)
