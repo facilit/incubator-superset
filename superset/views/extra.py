@@ -105,7 +105,7 @@ def trend_paraiba_obitos():
 
 @app.route("/casos_por_sintoma_geral")
 def casos_por_sintoma_geral():
-    connection = psycopg2.connect('postgresql://' + USUARIO_BD + ':' + SENHA_BD + '@localhost:5432/db_local')
+    connection = psycopg2.connect('postgresql://' + USUARIO_BD + ':' + SENHA_BD + '@192.168.0.100:5433/target_pb')
     cursor = connection.cursor()
     cursor.execute("select to_char(data_inicio_sintomas, 'YYYY-MM-DD'), casos_novos, casos_acumulados from casos_por_sintoma_geral")
 
@@ -153,7 +153,7 @@ def casos_por_sintoma_geral():
 
 @app.route("/obitos_por_ocorrencia_geral")
 def obitos_por_ocorrencia_geral():
-    connection = psycopg2.connect('postgresql://' + USUARIO_BD + ':' + SENHA_BD + '@localhost:5432/db_local')
+    connection = psycopg2.connect('postgresql://' + USUARIO_BD + ':' + SENHA_BD + '@192.168.0.100:5433/target_pb')
     cursor = connection.cursor()
     cursor.execute("select to_char(data_obito, 'YYYY-MM-DD'), obitos_novos, obitos_acumulados from obitos_por_ocorrencia_geral")
 
