@@ -1,10 +1,16 @@
-node {
-   stage('Preparation') { // for display purposes
-      // Get some code from a GitHub repository
-      git branch: 'paraiba', credentialsId: 'ac4c8028-d6bf-40ba-8c2d-7e72de2d809b', url: 'https://github.com/facilit/incubator-superset.git'
-   }
-    stage('Build') {  
-      def customImage = docker.build("facilittecnologia/superset:paraiba")
-      customImage.push()
-   }
-}  
+pipeline {
+agent any
+
+  stages {
+      stage("Build image") {
+          steps {
+              script {
+                docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
+                customImage = docker.build("facilittecnologia/superset:${env.BUILD_ID}")
+                customImage.push()
+              }
+            }
+        }
+    }
+}
+}
