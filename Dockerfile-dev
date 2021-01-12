@@ -18,7 +18,7 @@
 ######################################################################
 # Dev image...
 ######################################################################
-FROM facilittecnologia/superset:v1.no-ui
+FROM facilittecnologia/superset:latest
 
 COPY ./requirements* ./docker/requirements* /app/
 
